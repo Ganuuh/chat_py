@@ -27,6 +27,7 @@ async def webhook(
 
     # Handle message
     if message := request_body.entry[0].messaging[0].message:
+    
         date = request_body.entry[0].messaging[0].timestamp
 
         # Handle reply with text
@@ -53,6 +54,7 @@ async def webhook(
                 raise HTTPException(status_code=400, detail="Missing object field")
                 
             is_page = request_body.object == "page"
+            return {}
             await message_service.process_received_message(
                 message.text,
                 sender_id,
