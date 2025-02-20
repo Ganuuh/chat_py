@@ -54,7 +54,6 @@ async def webhook(
                 raise HTTPException(status_code=400, detail="Missing object field")
                 
             is_page = request_body.object == "page"
-            return {}
             await message_service.process_received_message(
                 message.text,
                 sender_id,

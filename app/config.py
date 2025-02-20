@@ -12,6 +12,8 @@ class Settings(BaseSettings):
     app_port : int = 8000
     reload :  bool = False
     socket_end_point : str = "ws://203.91.116.106:9080/ws/?is_client=true&channel=MESSENGER"
+    file_server_url  :str = "https://gateway.invescore.mn/fs-dev/file/upload"
+    chat_body_url : str  = "https://gateway.invescore.mn/chat-bot/api/webhook"
 
 
 settings =  Settings()

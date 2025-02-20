@@ -13,6 +13,7 @@ app.include_router(router)
 @app.on_event("startup")
 async def startup_event():
     ws_manager.refresh_task = asyncio.create_task(ws_manager.refresh_token_and_connect())
+    # asyncio.create_task(ws_manager.listen_messages())
 
 @app.on_event("shutdown")
 async def shutdown_event():

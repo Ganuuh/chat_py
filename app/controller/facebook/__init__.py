@@ -10,6 +10,35 @@ class FacebookResponse:
         self.message_id = data.get("message_id")
 
 class FacebookRequest:
+    async def read_message_from_crm(self,content_type : str , facebook_id : str ,  text_conversation :str):
+        json_body={}
+        match content_type:
+            case "TEXT": 
+                json_body={"recipient": {
+            "id": facebook_id
+          },
+          "message": {
+            "text": text_conversation
+          }}
+            case "IMAGE":
+                file_url = f"https://gateway.invescore.mn/fs-dev/file/get-file?filename={text_conversation}" 
+                json_body={
+          "recipient": {
+            "id": facebook_id
+          },
+          "message": {
+            "attachment": {
+              "type": "image",
+              "payload": {
+                "url": file_url,
+                "is_reusable": false
+              }
+            }
+          }
+        }
+        await self.send_message_request(body=json_body)
+        print("text conversation")
+        pass
     async def get_user_info(self, sender_id: str):
         return await get_user_info(sender_id)
 

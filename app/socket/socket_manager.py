@@ -2,6 +2,8 @@ import websockets
 import asyncio
 import httpx
 import json
+import json
+from types import SimpleNamespace
 from datetime import datetime, timedelta
 from typing import Optional, Dict, Any
 from app.config import Settings
@@ -42,7 +44,6 @@ class WebSocketManager:
             return None
 
     async def connect_socket(self):
-        """Establish a WebSocket connection."""
         if self.token:
             try:
                 if self.ws:
@@ -68,6 +69,16 @@ class WebSocketManager:
                 if self.ws:
                     message = await self.ws.recv()
                     print(f"Received message: {message}")
+                    json_body =  json.loads(message)
+                    chat_body ={}
+                    if "chat" in json_body:
+                        chat_body = SimpleNamespace(**json_body["chat"])
+                    if chat_body:
+                         await self.facebook_request.read_message_from_crm(
+                                  content_type=chat_body.content_type,  
+                                  facebook_id=chat_body.facebook_id,
+                                  text_conversation=chat_body.text_conversation)
+                         print("There is message !")
         except websockets.exceptions.ConnectionClosed:
             print("WebSocket connection closed")
         except Exception as e:
@@ -121,7 +132,7 @@ class WebSocketManager:
                 inbox_id=message_id,
                 lead_source="MESSENGER",
                 content_type=content_type, 
-                file_names=[json_body],
+                file_names=json_body,
                 fb_reply_id=replied_to,
                 is_guest=is_guest,
                 lead_type="CHAT",
@@ -131,6 +142,7 @@ class WebSocketManager:
             )
 
             message_body_string = message_body.to_json()
+            print(f"Message body string  : {message_body_string}")
 
             if self.ws:
                 await self.ws.send(message_body_string)
